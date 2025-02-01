@@ -41,7 +41,7 @@ async def fil_mod(client, message):
           await m.edit("**ᴀᴜᴛᴏꜰɪʟᴛᴇʀ ᴇɴᴀʙʟᴇᴅ**")
       
       elif args in mode_of:
-          FILTER_MODE[str(message.chat.id)] = False"
+          FILTER_MODE[str(message.chat.id)] = False
           await m.edit("**ᴀᴜᴛᴏꜰɪʟᴛᴇʀ ᴅɪꜱᴀʙʟᴇᴅ**")
       else:
           await m.edit("ᴜꜱᴇ :- `/autofilter on` ᴏʀ `/autofilter off`")
