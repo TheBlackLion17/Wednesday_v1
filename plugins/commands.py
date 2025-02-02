@@ -17,9 +17,9 @@ BATCH_FILES = {}
 async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[           
-            InlineKeyboardButton('♦️ᴜᴩᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ ♦️', url=f'https://t.me/{SUPPORT_CHAT}')
+            InlineKeyboardButton('⛩️ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ ⛩️', url=f'https://t.me/{SUPPORT_CHAT}')
             ],[
-            InlineKeyboardButton('ℹ️ Hᴇʟᴩ ℹ️', url=f"https://t.me/{temp.U_NAME}?start=help")
+            InlineKeyboardButton('💁‍♂️ sᴇᴇ ᴍᴇ 💁‍♂️', url=f"https://t.me/{temp.U_NAME}?start=help")
         ]]
         await message.reply(START_MESSAGE.format(user=message.from_user.mention if message.from_user else message.chat.title, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), disable_web_page_preview=True)                    
         await asyncio.sleep(2) 
@@ -33,13 +33,13 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention, message.from_user.username, temp.U_NAME))
     if len(message.command) != 2:
         buttons = [[
-            InlineKeyboardButton("✨ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀᴛ✨ ", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
+            InlineKeyboardButton("⇋ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ⇋ ", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
             ],[
             InlineKeyboardButton("ꜱᴇᴀʀᴄʜ 🔎", switch_inline_query_current_chat=''), 
-            InlineKeyboardButton("ᴄʜᴀɴɴᴇʟ 🔈", url="https://t.me/AgsModsOG")
+            InlineKeyboardButton("⛩️ ᴄʜᴀɴɴᴇʟ", url="https://t.me/AgsModsOG")
             ],[      
             InlineKeyboardButton("ʜᴇʟᴩ", callback_data="help"),
-            InlineKeyboardButton("ᴀʙᴏᴜᴛ ✨", callback_data="about")
+            InlineKeyboardButton("👀 ᴀʙᴏᴜᴛ", callback_data="about")
         ]]
         m = await message.reply_sticker("CAACAgUAAxkBAAJZtmZSPxpeDEIwobQtSQnkeGbwNjsyAAJjDgACjPuwVS9WyYuOlsqENQQ") 
         await asyncio.sleep(2)
@@ -52,16 +52,16 @@ async def start(client, message):
         except ChatAdminRequired:
             logger.error("MAKE SURE BOT IS ADMIN IN FORCESUB CHANNEL")
             return
-        btn = [[InlineKeyboardButton("ᴊᴏɪɴ ᴍʏ ᴄʜᴀɴɴᴇʟ 🤍", url=invite_link.invite_link),
+        btn = [[InlineKeyboardButton("📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌", url=invite_link.invite_link),
                InlineKeyboardButton("Start bot", url="https://t.me/FindoSearchBot?start=5909932224")
                ]]
         if message.command[1] != "subscribe":
             try:
                 kk, file_id = message.command[1].split("_", 1)
                 pre = 'checksubp' if kk == 'filep' else 'checksub' 
-                btn.append([InlineKeyboardButton("🥀 ᴛʀʏ Aɢᴀɪɴ 🥀", callback_data=f"{pre}#{file_id}")])
+                btn.append([InlineKeyboardButton("↻ Tʀʏ Aɢᴀɪɴ", callback_data=f"{pre}#{file_id}")])
             except (IndexError, ValueError):
-                btn.append([InlineKeyboardButton("🥀 ᴛʀʏ ᴀɢᴀɪɴ 🥀", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
+                btn.append([InlineKeyboardButton("↻ Tʀʏ Aɢᴀɪɴ", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
                 
         try:
             return await client.send_message(chat_id=message.from_user.id, text=FORCE_SUB_TEXT, reply_markup=InlineKeyboardMarkup(btn), parse_mode=enums.ParseMode.DEFAULT)
@@ -71,13 +71,13 @@ async def start(client, message):
         
     if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "okay", "help"]:
         buttons = [[
-            InlineKeyboardButton("✨ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀᴛ ✨", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
+            InlineKeyboardButton("⇋ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ⇋", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
             ],[
             InlineKeyboardButton("ꜱᴇᴀʀᴄʜ 🔎", switch_inline_query_current_chat=''), 
-            InlineKeyboardButton("ᴄʜᴀɴɴᴇʟ 🔈", url="https://t.me/AgsModsOG")
+            InlineKeyboardButton("⛩️ ᴄʜᴀɴɴᴇʟ", url="https://t.me/AgsModsOG")
             ],[      
             InlineKeyboardButton("ʜᴇʟᴩ ", callback_data="help"),
-            InlineKeyboardButton("ᴀʙᴏᴜᴛ ", callback_data="about")
+            InlineKeyboardButton("👀 ᴀʙᴏᴜᴛ ", callback_data="about")
         ]]
         m = await message.reply_sticker("CAACAgUAAxkBAAJZtmZSPxpeDEIwobQtSQnkeGbwNjsyAAJjDgACjPuwVS9WyYuOlsqENQQ")
         await asyncio.sleep(2)
@@ -238,7 +238,7 @@ async def delete(bot, message):
     else: return await msg.edit('This Is Not Supported File Format')
     file_id, file_ref = unpack_new_file_id(media.file_id)
     result = await Media.collection.delete_one({'_id': file_id})
-    if result.deleted_count: await msg.edit('File Is Successfully Deleted From Database')
+    if result.deleted_count: await msg.edit('ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ꜰʀᴏᴍ ᴅʙ ✅')
     else:
         file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
         result = await Media.collection.delete_many({
@@ -246,37 +246,37 @@ async def delete(bot, message):
             'file_size': media.file_size,
             'mime_type': media.mime_type
             })
-        if result.deleted_count: await msg.edit('File Is Successfully Deleted From Database')
+        if result.deleted_count: await msg.edit('ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ꜰʀᴏᴍ ᴅʙ ✅')
         else:
             result = await Media.collection.delete_many({
                 'file_name': media.file_name,
                 'file_size': media.file_size,
                 'mime_type': media.mime_type
             })
-            if result.deleted_count: await msg.edit('File Is Successfully Deleted From Database')
-            else: await msg.edit('File Not Found In Database')
+            if result.deleted_count: await msg.edit('ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ꜰʀᴏᴍ ᴅʙ ✅')
+            else: await msg.edit('ꜰɪʟᴇ ɪꜱ ɴᴏᴛ ꜰᴏᴜɴᴅ ɪɴ ᴅʙ ❌')
 
 
 @Client.on_message(filters.command('deleteall') & filters.user(ADMINS))
 async def delete_all_index(bot, message):
     button = [[
-        InlineKeyboardButton("YES", callback_data="autofilter_delete")
+        InlineKeyboardButton("⚠️ ʏᴇꜱ ⚠️", callback_data="autofilter_delete")
         ],[
-        InlineKeyboardButton("CANCEL", callback_data="close_data")
+        InlineKeyboardButton("❌ ɴᴏ ❌", callback_data="close_data")
     ]]
-    await message.reply_text('This Will Delete All Indexed Files.\ndo You Want To Continue??', quote=True, reply_markup=InlineKeyboardMarkup(button))
+    await message.reply_text('ᴛʜɪꜱ ᴡɪʟʟ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ʏᴏᴜʀ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ !\nᴅᴏ ʏᴏᴜ ꜱᴛɪʟʟ ᴡᴀɴᴛ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ ?', quote=True, reply_markup=InlineKeyboardMarkup(button))
             
 
 @Client.on_callback_query(filters.regex(r'^autofilter_delete'))
 async def delete_all_index_confirm(bot, message):
     await Media.collection.drop()
-    await message.message.edit('Succesfully Deleted All The Indexed Files.')
+    await message.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
 
 
 @Client.on_message(filters.command('settings'))
 async def settings(client, message):
     userid = message.from_user.id if message.from_user else None
-    if not userid: return await message.reply(f"Yᴏᴜ Aʀᴇ Aɴᴏɴʏᴍᴏᴜs Aᴅᴍɪɴ. Usᴇ /connect {message.chat.id} Iɴ PM")
+    if not userid: return await message.reply(f"ʏᴏᴜ'ʀᴇ ᴀɴᴏɴʏᴍᴏᴜꜱ ᴀᴅᴍɪɴ ᴜꜱᴇ /connect {message.chat.id} ɪɴ ᴘᴍ.")
     chat_type = message.chat.type
     if chat_type == enums.ChatType.PRIVATE:
         grpid = await active_connection(str(userid))
@@ -286,8 +286,8 @@ async def settings(client, message):
                 chat = await client.get_chat(grpid)
                 title = chat.title
             except:
-                return await message.reply_text("Mᴀᴋᴇ Sᴜʀᴇ I'ᴍ Pʀᴇsᴇɴᴛ Iɴ Yᴏᴜʀ Gʀᴏᴜᴘ!!", quote=True)
-        else: return await message.reply_text("I'ᴍ Nᴏᴛ Cᴏɴɴᴇᴄᴛᴇᴅ Tᴏ Aɴʏ Gʀᴏᴜᴘs!", quote=True)
+                return await message.reply_text("ᴍᴀᴋᴇ ꜱᴜʀᴇ ɪ'ᴍ ᴘʀᴇꜱᴇɴᴛ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ !!!", quote=True)
+        else: return await message.reply_text("ɪ'ᴍ ɴᴏᴛ ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴛᴏ ᴀɴʏ ɢʀᴏᴜᴘ !", quote=True)
 
     elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         grp_id = message.chat.id
@@ -317,7 +317,7 @@ async def settings(client, message):
             InlineKeyboardButton(f"ᴡᴇʟᴄᴏᴍᴇ ᴍᴇꜱꜱᴀɢᴇ : {'ᴏɴ' if settings['welcome'] else 'ᴏꜰꜰ'}", f'setgs#welcome#{settings["welcome"]}#{str(grp_id)}')
         ]]
         await message.reply_text(
-            text=f"<b>Cʜᴀɴɢᴇ Yᴏᴜʀ Sᴇᴛᴛɪɴɢꜱ Fᴏʀ {title} Aꜱ Yᴏᴜʀ Wɪꜱʜ ⚙</b>",
+            text=f"<b>ᴄʜᴀɴɢᴇ ʏᴏᴜʀ ꜱᴇᴛᴛɪɴɢꜱ ꜰᴏʀ  {title} ᴀꜱ ʏᴏᴜ ᴡɪꜱʜ ⚙</b>",
             reply_markup=InlineKeyboardMarkup(buttons),
             quote=True, 
             disable_web_page_preview=True,
@@ -328,7 +328,7 @@ async def settings(client, message):
 
 @Client.on_message(filters.command('set_template'))
 async def save_template(client, message):
-    sts = await message.reply("☣️ᴄʜᴇᴄᴋɪɴɢ ᴛᴇᴍᴘʟᴀᴛᴇ ☣️")
+    sts = await message.reply("ᴄʜᴇᴄᴋɪɴɢ ᴛᴇᴍᴘʟᴀᴛᴇ...")
     userid = message.from_user.id if message.from_user else None
     if not userid: return await message.reply(f"ʏᴏᴜ ᴀʀᴇ ᴡɴᴏɴʏᴍᴏᴜs ᴀᴅᴍɪɴ. ᴜsᴇ /connect {message.chat.id} Iɴ PM")
     chat_type = message.chat.type
@@ -353,15 +353,15 @@ async def save_template(client, message):
         and st.status != enums.ChatMemberStatus.OWNER
         and str(userid) not in ADMINS
     ): return
-    if len(message.command) < 2: return await sts.edit("No Iɴᴩᴜᴛ!!")
+    if len(message.command) < 2: return await sts.edit("ɴᴏ ɪɴᴘᴜᴛ !")
     template = message.text.split(" ", 1)[1]
     await save_group_settings(grp_id, 'template', template)
-    await sts.edit(f"♦️ꜱᴜᴄᴄᴇssғᴜʟʟʏ ᴄʜᴀɴɢᴇᴅ ᴛᴇᴍᴘʟᴀᴛᴇ ꜰᴏʀ♦️ {title} Tᴏ\n\n{template}")
+    await sts.edit(f"✅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴄʜᴀɴɢᴇᴅ ᴛᴇᴍᴘʟᴀᴛᴇ ꜰᴏʀ {title} ᴛᴏ\n\n{template}")
 
 
 @Client.on_message(filters.command('get_template'))
 async def geg_template(client, message):
-    sts = await message.reply("⚠️ᴄʜᴇᴄᴋɪɴɢ ᴛᴇᴍᴘʟᴀᴛᴇ ⚠️")
+    sts = await message.reply("⚠ ᴄʜᴇᴄᴋɪɴɢ ᴛᴇᴍᴘʟᴀᴛᴇ ⚠")
     userid = message.from_user.id if message.from_user else None
     if not userid: return await message.reply(f"Yᴏᴜ Aʀᴇ Aɴᴏɴʏᴍᴏᴜs Aᴅᴍɪɴ. Usᴇ /connect {message.chat.id} Iɴ PM")
     chat_type = message.chat.type
