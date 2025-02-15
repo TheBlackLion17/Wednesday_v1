@@ -46,9 +46,9 @@ NO_RESULTS_MSG = is_enabled((environ.get("NO_RESULTS_MSG", 'False')), False)
 # MongoDB information
 SHORT_URL = environ.get("SHORT_URL")
 SHORT_API = environ.get("SHORT_API")
-DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://king:king@cluster0.mgicw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://akkuabbu3:akkuabbu3@cluster0.j0kqz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 DATABASE_NAME = environ.get('DATABASE_NAME', "cluster0")
-SECONDDB_URI =  environ.get('SECONDDB_URI', "mongodb+srv://king:king@cluster0.mgicw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+SECONDDB_URI =  environ.get('SECONDDB_URI', "mongodb+srv://test:test@cluster0.lvhcq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 
 # Others
