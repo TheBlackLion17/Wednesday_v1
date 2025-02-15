@@ -1,4 +1,3 @@
-
 import logging
 from struct import pack
 import re
@@ -8,15 +7,20 @@ from pymongo.errors import DuplicateKeyError
 from umongo import Instance, Document, fields
 from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
-from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER, MAX_B_TN, SECONDDB_URI
-from utils import get_settings, save_group_settings
-from sample_info import tempDict 
+from info import *
+from utils import get_settings, save_group_settings, temp
+from database.users_chats_db import add_name
+from .Imdbposter import get_movie_details, fetch_image
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+
+#---------------------------------------------------------
+#some basic variables needed
+saveMedia = None
+tempDict = {'indexDB': DATABASE_URI}
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-#some basic variables needed
-saveMedia = None
 
 #primary db
 client = AsyncIOMotorClient(DATABASE_URI)
@@ -36,9 +40,8 @@ class Media(Document):
     class Meta:
         indexes = ('$file_name', )
         collection_name = COLLECTION_NAME
-
 #secondary db
-client2 = AsyncIOMotorClient(SECONDDB_URI)
+client2 = AsyncIOMotorClient(DATABASE_URI2)
 db2 = client2[DATABASE_NAME]
 instance2 = Instance.from_db(db2)
 
@@ -65,43 +68,112 @@ async def choose_mediaDB():
     else:
         logger.info("Using second db (Media2)")
         saveMedia = Media2
-
-async def save_file(media):
-    """Save file in database"""
-
-    # TODO: Find better way to get same file_id for same media to avoid duplicates
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+    
+async def send_msg(bot, filename, caption): 
     try:
-        if await Media.count_documents({'file_id': file_id}, limit=1):
+        year_match = re.search(r"\b(19|20)\d{2}\b", caption)
+        if year_match:
+            year = year_match.group(0)
+        else:
+            year = None 
+            
+        pattern = r"(?i)(?:s|season)0*(\d{1,2})"
+        season = re.search(pattern, caption)
+
+        if not season:
+            season = re.search(pattern, filename)
+        
+        if year:
+            filename = filename[: filename.find(year) + 4]
+            
+        if not year:   
+          if season:
+            season = season.group(1) if season else None 
+            filename = filename[: filename.find(season) +1 ]
+
+        qualities = ["ORG", "org", "hdcam", "HDCAM", "HQ", "hq", "HDRip", "hdrip", "camrip", "CAMRip", "hdtc", "predvd", "DVDscr", "dvdscr", "dvdrip", "dvdscr", "HDTC", "dvdscreen", "HDTS", "hdts"]
+        quality = await get_qualities(caption.lower(), qualities) or "HDRip"
+
+        language = ""
+        possible_languages = CAPTION_LANGUAGES
+        for lang in possible_languages:
+            if lang.lower() in caption.lower():
+                language += f"{lang}, "
+
+        if not language:
+            language = "Not idea 😄"
+        else:
+            language = language[:-2]
+
+        filename = filename.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace('{', '').replace('}', '').replace(':', '').replace(';', '').replace("'", '').replace('-', '').replace('!', '')
+        
+        text = "#𝑵𝒆𝒘_𝑭𝒊𝒍𝒆_𝑨𝒅𝒅𝒆𝒅 ✅\n\n👷𝑵𝒂𝒎𝒆: `{}`\n\n🌳𝑸𝒖𝒂𝒍𝒊𝒕𝒚: {}\n\n🍁𝑨𝒖𝒅𝒊𝒐: {}"
+        text = text.format(filename, quality, language)
+        if await add_name(6646028262, filename):
+          imdb_task = get_movie_details(filename)
+          imdb = await imdb_task
+
+          resized_poster = None
+          if imdb:
+              poster_url = imdb.get('poster_url')
+              if poster_url:
+                  resized_poster_task = fetch_image(poster_url)
+                  resized_poster = await resized_poster_task
+            
+          filenames = filename.replace(" ", '-')
+          btn = [[InlineKeyboardButton('🌲 Get Files 🌲', url=f"https://telegram.me/{temp.U_NAME}?start=getfile-{filenames}")]]
+          if resized_poster:
+              await bot.send_photo(chat_id=MOVIE_UPDATE_CHANNEL, photo=resized_poster, caption=text, reply_markup=InlineKeyboardMarkup(btn))
+          else:              
+              await bot.send_message(chat_id=MOVIE_UPDATE_CHANNEL, text=text, reply_markup=InlineKeyboardMarkup(btn))
+
+    except:
+        pass
+
+async def get_qualities(text, qualities: list):
+    """Get all Quality from text"""
+    quality = []
+    for q in qualities:
+        if q in text:
+            quality.append(q)
+    quality = ", ".join(quality)
+    return quality[:-2] if quality.endswith(", ") else quality
+
+async def save_file(bot, media):
+  """Save file in database"""
+  # TODO: Find better way to get same file_id for same media to avoid duplicates
+  file_id, file_ref = unpack_new_file_id(media.file_id)
+  file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+  try:
+    if await Media.count_documents({'file_id': file_id}, limit=1):
             logger.warning(f'{getattr(media, "file_name", "NO_FILE")} is already saved in primary DB !')
             return False, 0
-        file = saveMedia(
-            file_id=file_id,
-            file_ref=file_ref,
-            file_name=file_name,
-            file_size=media.file_size,
-            file_type=media.file_type,
-            mime_type=media.mime_type,
-            caption=media.caption.html if media.caption else None,
-        )
-    except ValidationError:
-        logger.exception('Error occurred while saving file in database')
-        return False, 2
+    file = saveMedia(
+      file_id=file_id,
+      file_ref=file_ref,
+      file_name=file_name,
+      file_size=media.file_size,
+      file_type=media.file_type,
+      mime_type=media.mime_type,
+      caption=media.caption.html if media.caption else None,
+    )
+  except ValidationError:
+    logger.exception('Error occurred while saving file in database')
+    return False, 2
+  else:
+    try:
+      await file.commit()
+    except DuplicateKeyError:   
+      logger.warning(
+        f'{getattr(media, "file_name", "NO_FILE")} is already saved in database'
+      )
+
+      return False, 0
     else:
-        try:
-            await file.commit()
-        except DuplicateKeyError:  
-            logger.warning(
-                f'{getattr(media, "file_name", "NO_FILE")} is already saved in database'
-            )
-
-            return False, 0
-        else:
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-            return True, 1
-
-
+      logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+      if MOVIE_UPDATE_NOTIFICATION:
+        await send_msg(bot, file.file_name, file.caption)
+      return True, 1
 
 async def get_search_results(chat_id, query, file_type=None, max_results=10, offset=0, filter=False):
     """For given query return (results, next_offset)"""
@@ -147,18 +219,18 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     total_results = ((await Media.count_documents(filter))+(await Media2.count_documents(filter)))
 
     #verifies max_results is an even number or not
-    if max_results%2 != 0: #if max_results is an odd number, add 1 to make it an even number
+    if max_results%2 != 0: 
         logger.info(f"Since max_results is an odd number ({max_results}), bot will use {max_results+1} as max_results to make it even.")
         max_results += 1
 
     cursor = Media.find(filter)
     cursor2 = Media2.find(filter)
-    # Sort by recent
+
     cursor.sort('$natural', -1)
     cursor2.sort('$natural', -1)
-    # Slice files according to offset and max results
+
     cursor2.skip(offset).limit(max_results)
-    # Get list of files
+
     fileList2 = await cursor2.to_list(length=max_results)
     if len(fileList2)<max_results:
         next_offset = offset+len(fileList2)
@@ -173,6 +245,7 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     if next_offset >= total_results:
         next_offset = ''
     return files, next_offset, total_results
+
 
 async def get_bad_files(query, file_type=None, filter=False):
     """For given query return (results, next_offset)"""
@@ -203,13 +276,12 @@ async def get_bad_files(query, file_type=None, filter=False):
 
     cursor = Media.find(filter)
     cursor2 = Media2.find(filter)
-    # Sort by recent
+
     cursor.sort('$natural', -1)
     cursor2.sort('$natural', -1)
-    # Get list of files
+
     files = ((await cursor2.to_list(length=(await Media2.count_documents(filter))))+(await cursor.to_list(length=(await Media.count_documents(filter)))))
 
-    #calculate total results
     total_results = len(files)
 
     return files, total_results
@@ -222,6 +294,7 @@ async def get_file_details(query):
         cursor2 = Media2.find(filter)
         filedetails = await cursor2.to_list(length=1)
     return filedetails
+
 
 def encode_file_id(s: bytes) -> str:
     r = b""
