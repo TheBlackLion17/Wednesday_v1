@@ -11,3 +11,4 @@ datetime
 pytz
 aiohttp
 psutil==5.9.4
+dnspython==2.7.0
