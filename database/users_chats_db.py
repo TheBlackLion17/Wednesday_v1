@@ -1,6 +1,6 @@
 
 import motor.motor_asyncio
-from info import DATABASE_NAME, DATABASE_URI, DATABASE_URI2, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, MAX_BTN, AUTO_FFILTER, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK, TUTORIAL, IS_TUTORIAL, VERIFY
+from info import DATABASE_NAME, DATABASE_URI, DATABASE_URI2, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, MAX_BTN, AUTO_FFILTER, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK 
 import datetime
 import pytz  
 from pymongo.errors import DuplicateKeyError
@@ -172,9 +172,6 @@ class Database:
             'shortlink': SHORTLINK_URL,
             'shortlink_api': SHORTLINK_API,
             'is_shortlink': IS_SHORTLINK,
-            'tutorial': TUTORIAL,
-            'is_tutorial': IS_TUTORIAL,
-            'is_verify': VERIFY,
         }
         chat = await self.grp.find_one({'id':int(id)})
         if chat:
@@ -208,59 +205,7 @@ class Database:
     async def update_user(self, user_data):
         await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
-    async def has_premium_access(self, user_id):
-        user_data = await self.get_user(user_id)
-        if user_data:
-            expiry_time = user_data.get("expiry_time")
-            if expiry_time is None:
-                return False
-            elif isinstance(expiry_time, datetime.datetime) and datetime.datetime.now() <= expiry_time:
-                return True
-            else:
-                await self.users.update_one({"id": user_id}, {"$set": {"expiry_time": None}})
-        return False
-        
-    async def update_user(self, user_data):
-        await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
-
-    async def update_one(self, filter_query, update_data):
-        try:
-            result = await self.users.update_one(filter_query, update_data)
-            return result.matched_count == 1
-        except Exception as e:
-            print(f"Error updating document: {e}")
-            return False
-
-    async def get_expired(self, current_time):
-        expired_users = []
-        if data := self.users.find({"expiry_time": {"$lt": current_time}}):
-            async for user in data:
-                expired_users.append(user)
-        return expired_users
-
-    async def remove_premium_access(self, user_id):
-        return await self.update_one(
-            {"id": user_id}, {"$set": {"expiry_time": None}}
-        )
-
-    async def check_trial_status(self, user_id):
-        user_data = await self.get_user(user_id)
-        if user_data:
-            return user_data.get("has_free_trial", False)
-        return False
-
-    async def give_free_trial(self, user_id):
-        user_id = user_id
-        seconds = 5*60         
-        expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)
-        user_data = {"id": user_id, "expiry_time": expiry_time, "has_free_trial": True}
-        await self.users.update_one({"id": user_id}, {"$set": user_data}, upsert=True)
-
-    async def all_premium_users(self):
-        count = await self.users.count_documents({
-        "expiry_time": {"$gt": datetime.datetime.now()}
-        })
-        return count    
+  
         
 db = Database(DATABASE_URI, DATABASE_NAME)
 db2 = Database(DATABASE_URI2, DATABASE_NAME)
