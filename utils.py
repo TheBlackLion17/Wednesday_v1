@@ -319,6 +319,33 @@ async def get_shortlink(link):
         logger.error(e)
         return link
 
+async def check_token(bot, userid, token):
+    user = await bot.get_users(userid)
+    if not await db.is_user_exist(user.id):
+        await db.add_user(user.id, user.first_name)
+        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+    if user.id in TOKENS.keys():
+        TKN = TOKENS[user.id]
+        if token in TKN.keys():
+            is_used = TKN[token]
+            if is_used == True:
+                return False
+            else:
+                return True
+    else:
+        return False
+
+async def get_token(bot, userid, link, fileid):
+    user = await bot.get_users(userid)
+    if not await db.is_user_exist(user.id):
+        await db.add_user(user.id, user.first_name)
+        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
+    TOKENS[user.id] = {token: False}
+    link = f"{link}verify-{user.id}-{token}-{fileid}"
+    shortened_verify_url = await get_verify_shorted_link(link)
+    return str(shortened_verify_url)
+
 
 async def verify_user(bot, userid, token):
     user = await bot.get_users(int(userid))
@@ -331,6 +358,64 @@ async def verify_user(bot, userid, token):
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await update_verify_status(user.id, date_var, temp_time)
+
+async def check_verification(bot, userid):
+    user = await bot.get_users(int(userid))
+    if not await db.is_user_exist(user.id):
+        await db.add_user(user.id, user.first_name)
+        await bot.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(user.id, user.mention))
+
+
+async def send_all(bot, userid, files, ident, chat_id, user_name, query):
+    settings = await get_settings(chat_id)
+    if 'is_shortlink' in settings.keys():
+        ENABLE_SHORTLINK = settings['is_shortlink']
+    else:
+        await save_group_settings(message.chat.id, 'is_shortlink', False)
+        ENABLE_SHORTLINK = False
+    try:
+        if ENABLE_SHORTLINK:
+            for file in files:
+                title = file.file_name
+                size = get_size(file.file_size)
+                await bot.send_message(chat_id=userid, text=f"<b>Hᴇʏ ᴛʜᴇʀᴇ {user_name} 👋🏽 \n\n✅ Sᴇᴄᴜʀᴇ ʟɪɴᴋ ᴛᴏ ʏᴏᴜʀ ғɪʟᴇ ʜᴀs sᴜᴄᴄᴇssғᴜʟʟʏ ʙᴇᴇɴ ɢᴇɴᴇʀᴀᴛᴇᴅ ᴘʟᴇᴀsᴇ ᴄʟɪᴄᴋ ᴅᴏᴡɴʟᴏᴀᴅ ʙᴜᴛᴛᴏɴ\n\n🗃️ Fɪʟᴇ Nᴀᴍᴇ : {title}\n🔖 Fɪʟᴇ Sɪᴢᴇ : {size}</b>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📤 Dᴏᴡɴʟᴏᴀᴅ 📥", url=await get_shortlink(chat_id, f"https://telegram.me/{temp.U_NAME}?start=files_{file.file_id}"))]]))
+        else:
+            for file in files:
+                    f_caption = file.caption
+                    title = file.file_name
+                    size = get_size(file.file_size)
+                    if CUSTOM_FILE_CAPTION:
+                        try:
+                            f_caption = CUSTOM_FILE_CAPTION.format(file_name='' if title is None else title,
+                                                                    file_size='' if size is None else size,
+                                                                    file_caption='' if f_caption is None else f_caption)
+                        except Exception as e:
+                            print(e)
+                            f_caption = f_caption
+                    if f_caption is None:
+                        f_caption = f"{title}"
+                    await bot.send_cached_media(
+                        chat_id=userid,
+                        file_id=file.file_id,
+                        caption=f_caption,
+                        protect_content=True if ident == "filep" else False,
+                        reply_markup=InlineKeyboardMarkup(
+                            [
+                                [
+                                InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url=GRP_LNK),
+                                InlineKeyboardButton('Uᴘᴅᴀᴛᴇs Cʜᴀɴɴᴇʟ', url=CHNL_LNK)
+                            ],[
+                                InlineKeyboardButton("Bᴏᴛ Oᴡɴᴇʀ", url="t.me/cosmic_freak")
+                                ]
+                            ]
+                        )
+                    )
+    except UserIsBlocked:
+        await query.answer('Uɴʙʟᴏᴄᴋ ᴛʜᴇ ʙᴏᴛ ᴍᴀʜɴ !', show_alert=True)
+    except PeerIdInvalid:
+        await query.answer('Hᴇʏ, Sᴛᴀʀᴛ Bᴏᴛ Fɪʀsᴛ Aɴᴅ Cʟɪᴄᴋ Sᴇɴᴅ Aʟʟ', show_alert=True)
+    except Exception as e:
+        await query.answer('Hᴇʏ, Sᴛᴀʀᴛ Bᴏᴛ Fɪʀsᴛ Aɴᴅ Cʟɪᴄᴋ Sᴇɴᴅ Aʟʟ', show_alert=True)
 
 # from Midukki-RoBoT
 def extract_time(time_val):
