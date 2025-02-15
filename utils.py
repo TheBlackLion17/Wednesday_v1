@@ -142,6 +142,24 @@ __version__ = "Wednesday_v1"
 __license__ = "GNU GENERAL PUBLIC LICENSE V2"
 __copyright__ = "Copyright (C) 2023-present TheBlackLion17 <https://github.com/TheBlackLion17>"
 
+def last_online(from_user):
+    time = ""
+    if from_user.is_bot:
+        time += "🤖 Bot :("
+    elif from_user.status == enums.UserStatus.RECENTLY:
+        time += "Recently"
+    elif from_user.status == enums.UserStatus.LAST_WEEK:
+        time += "Within the last week"
+    elif from_user.status == enums.UserStatus.LAST_MONTH:
+        time += "Within the last month"
+    elif from_user.status == enums.UserStatus.LONG_AGO:
+        time += "A long time ago :("
+    elif from_user.status == enums.UserStatus.ONLINE:
+        time += "Currently Online"
+    elif from_user.status == enums.UserStatus.OFFLINE:
+        time += from_user.last_online_date.strftime("%a, %d %b %Y, %H:%M:%S")
+    return time
+
 async def search_gagala(text):
     usr_agent = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
