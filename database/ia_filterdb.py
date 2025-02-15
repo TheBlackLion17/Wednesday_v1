@@ -151,23 +151,19 @@ async def save_file(media):
             file_type=media.file_type,
             mime_type=media.mime_type
         )
-  except ValidationError:
-    logger.exception('Error occurred while saving file in database')
-    return False, 2
-  else:
-    try:
-      await file.commit()
-    except DuplicateKeyError:   
-      logger.warning(
-        f'{getattr(media, "file_name", "NO_FILE")} is already saved in database'
-      )
-
-      return False, 0
+    except ValidationError:
+        logger.exception('Error Occurred While Saving File In Database')
+        return False, 2
     else:
-      logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-      if MOVIE_UPDATE_NOTIFICATION:
-        await send_msg(bot, file.file_name, file.caption)
-      return True, 1
+        try:
+            await file.commit()
+        except DuplicateKeyError:      
+            logger.warning(str(getattr(media, "file_name", "NO FILE NAME")) + " is already saved in database")
+            return False, 0
+        else:
+            logger.info(str(getattr(media, "file_name", "NO FILE NAME")) + " is saved in database")
+            return True, 1
+
 
 async def get_search_results(chat_id, query, file_type=None, max_results=10, offset=0, filter=False):
     """For given query return (results, next_offset)"""
