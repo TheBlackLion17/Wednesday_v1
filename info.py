@@ -18,6 +18,7 @@ API_HASH = environ.get('API_HASH','57b85f72104db3f08f9795b0410eb556')
 BOT_TOKEN = environ.get('BOT_TOKEN', '7174411060:AAEQCnvh__ks7II0UpoLEj8jGyL3mOd4L0U')
 
 # Bot settings
+WEB_SUPPORT = bool(environ.get("WEBHOOK", 'True'))
 CACHE_TIME = int(environ.get('CACHE_TIME', 300))
 USE_CAPTION_FILTER = is_enabled((environ.get('USE_CAPTION_FILTER', 'True')), True)
 UPTIME = time.time()
