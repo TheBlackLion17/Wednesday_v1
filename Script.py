@@ -7,7 +7,7 @@ class script(object):
 
 🚀 𝖠𝗇𝖽 𝗂’𝗅𝗅 𝗍𝖺𝗄𝖾 𝗂𝗍 𝖿𝗋𝗈𝗆 𝗍𝗁𝖾𝗋𝖾!
 
-<blockquote>©️ Maintained by <a href="https://t.me/im_goutham_josh">@im_goutham_josh</a></blockquote>"""
+<blockquote>©️ Maintained by <a href="https://t.me/AgsModsOG">@AgsModsOG</a></blockquote>"""
 
     HELP_TXT = """
 🙋🏻‍♂️ Hᴇʟʟᴏ {}! 🤓
@@ -29,7 +29,7 @@ class script(object):
     ABOUT_TXT = """<b>
 <blockquote>🤖 Nᴀᴍᴇ: ᴋᴜᴛᴛᴜ ʙᴏᴛ™</blockquote>
 
-👨‍💻 Cʀᴇᴀᴛᴏʀ: <a href="https://t.me/im_goutham_josh">Goutham SER</a>  
+👨‍💻 Cʀᴇᴀᴛᴏʀ: <a href="https://t.me/AgsModsOG">AgsModsOG</a>  
 💬 Lᴀɴɢᴜᴀɢᴇ: Pʏᴛʜᴏɴ 3  
 🗄️ Dᴀᴛᴀʙᴀsᴇ: Mᴏɴɢᴏ DB  
 🌐 Sᴇʀᴠᴇʀ: KᴏYᴇʙ
@@ -37,10 +37,10 @@ class script(object):
     SOURCE_TXT = """<b>📢 NOTE:</b>
 <blockquote>ᴋᴜᴛᴛᴜ ʙᴏᴛ™ is an open source project.</blockquote>
 
-🔗 <b>Source Code:</b> <a href="https://github.com/GouthamSER">Click Here 😂</a>
+🔗 <b>Source Code:</b> <a href="https://t.me/AgsModsOG">Click Here 😂</a>
 
 <b>👨‍💻 DEVS:</b>  
-<blockquote><a href="https://t.me/wudixh12">Gᴏᴜᴛʜᴀᴍ Josh ✅</a></blockquote>
+<blockquote><a href="https://t.me/AgsModsOG">AgsModsOG✅</a></blockquote>
 """
 
     MANUALFILTER_TXT = """<b>❓ Help: Filters</b>
@@ -143,12 +143,12 @@ This module only works for my admins.
 
 📦 Fɪʟᴇ Sɪᴢᴇ: 💾 <code>{file_size}</code>
 
-🔗 [⚡ Jᴏɪɴ Eʟᴅᴏʀᴀᴅᴏ ⚡](https://t.me/+53lB8qzQaGFlNDll)</b>"""
+🔗 [⚡ Jᴏɪɴ Eʟᴅᴏʀᴀᴅᴏ ⚡](https://t.me/AgsModsOG)</b>"""
     
     RESTART_GC_TXT = """
 <b>🔄 𝖡𝗈𝗍 𝖱𝖾𝗌𝗍𝖺𝗋𝗍𝖾𝖽!</b>
-Kuttu Bot  
-<a href="https://t.me/im_goutham_josh">@im_goutham_josh</a>
+AgsModsOG 
+<a href="https://t.me/AgsModsOG">@AgsModsOG</a>
 
 📅 𝖣𝖺𝗍𝖾 : <code>{}</code>  
 ⏰ 𝖳𝗂𝗆𝖾 : <code>{}</code>  
@@ -196,9 +196,9 @@ Take a peek at the instructions below and let’s try again! 👇🏼
 """
 
     RESTART_TXT = """<b><u>𝖡𝗈𝗍 𝖱𝖾𝗌𝗍𝖺𝗋𝗍𝖾𝖽 ✅</u></b>"""
-    DMCA_TXT = """<b><u>This Telegram bot is designed to operate within the guidelines of the Digital Millennium Copyright Act (DMCA) and respects intellectual property rights. We are committed to responding to any valid DMCA takedown notices promptly.</u></b>
+    DMCA_TXT = """<b><u>If You Want to craete a bot Pls condact over Admin</u></b>
 
-<blockquote>Please send your DMCA takedown notice to dmcarexie@proton.me</blockquote>
+<blockquote>Please send your msg to @ags_mods_bot</blockquote>
 """
 
 
