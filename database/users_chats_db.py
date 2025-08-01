@@ -1,32 +1,7 @@
-
+# https://github.com/odysseusmax/animated-lamp/blob/master/bot/database/database.py
 import motor.motor_asyncio
-from info import DATABASE_NAME, DATABASE_URI, DATABASE_URI2, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT, AUTO_DELETE, MAX_BTN, AUTO_FFILTER, SHORTLINK_API, SHORTLINK_URL, IS_SHORTLINK 
-import datetime
-import pytz  
-from pymongo.errors import DuplicateKeyError
-from pymongo import MongoClient
+from info import DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT
 
-my_client = MongoClient(DATABASE_URI)
-mydb = my_client["filename"]
-
-async def add_name(user_id, filename):
-    user_db = mydb[str(user_id)]
-    user = {'_id': filename}
-
-    existing_user = user_db.find_one({'_id': filename})
-
-    if existing_user is not None:
-        return False
-    try:
-        user_db.insert_one(user)
-        return True
-    except DuplicateKeyError:
-        return False
-    
-async def delete_all_msg(user_id):
-    user_db = mydb[str(user_id)]
-    user_db.delete_many({})
-    
 class Database:
     
     def __init__(self, uri, database_name):
@@ -34,16 +9,7 @@ class Database:
         self.db = self._client[database_name]
         self.col = self.db.users
         self.grp = self.db.groups
-        self.users = self.db.uersz
-        self.req = self.db.requests
-        
-    async def find_join_req(self, id):
-        return bool(await self.req.find_one({'id': id}))
-        
-    async def add_join_req(self, id):
-        await self.req.insert_one({'id': id})
-    async def del_join_req(self):
-        await self.req.drop()
+
 
     def new_user(self, id, name):
         return dict(
@@ -65,23 +31,6 @@ class Database:
                 reason="",
             ),
         )
-
-    async def update_verification(self, id, date, time):
-        status = {
-            'date': str(date),
-            'time': str(time)
-        }
-        await self.col.update_one({'id': int(id)}, {'$set': {'verification_status': status}})
-
-    async def get_verified(self, id):
-        default = {
-            'date': "1999-12-31",
-            'time': "23:59:59"
-        }
-        user = await self.col.find_one({'id': int(id)})
-        if user:
-            return user.get("verification_status", default)
-        return default    
     
     async def add_user(self, id, name):
         user = self.new_user(id, name)
@@ -165,13 +114,7 @@ class Database:
             'imdb': IMDB,
             'spell_check': SPELL_CHECK_REPLY,
             'welcome': MELCOW_NEW_USERS,
-            'auto_delete': AUTO_DELETE,
-            'auto_ffilter': AUTO_FFILTER,
-            'max_btn': MAX_BTN,
-            'template': IMDB_TEMPLATE,
-            'shortlink': SHORTLINK_URL,
-            'shortlink_api': SHORTLINK_API,
-            'is_shortlink': IS_SHORTLINK,
+            'template': IMDB_TEMPLATE
         }
         chat = await self.grp.find_one({'id':int(id)})
         if chat:
@@ -199,13 +142,5 @@ class Database:
     async def get_db_size(self):
         return (await self.db.command("dbstats"))['dataSize']
 
-    async def get_user(self, user_id):
-        user_data = await self.users.find_one({"id": user_id})
-        return user_data
-    async def update_user(self, user_data):
-        await self.users.update_one({"id": user_data["id"]}, {"$set": user_data}, upsert=True)
 
-  
-        
 db = Database(DATABASE_URI, DATABASE_NAME)
-db2 = Database(DATABASE_URI2, DATABASE_NAME)
