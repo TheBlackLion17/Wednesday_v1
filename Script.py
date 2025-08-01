@@ -42,8 +42,7 @@ class script(object):
 <b>👨‍💻 DEVS:</b>  
 <blockquote><a href="https://t.me/AgsModsOG">AgsModsOG✅</a></blockquote>
 """
-
-    MANUALFILTER_TXT = """<b>❓ Help: Filters</b>
+    MANUELFILTER_TXT = """<b>❓ Help: Filters</b>
 
 Filters allow users to set automated replies for specific keywords. Whenever a message contains a keyword, EvaMaria will automatically respond with the preset message.
 
