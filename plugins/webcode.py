@@ -1,13 +1,13 @@
 import logging
 from aiohttp import web as webserver
 
-# Setup logging for web server
+# Setup logging for aiohttp
 logger = logging.getLogger("aiohttp.server")
 
 # Define routes
 routes = webserver.RouteTableDef()
 
-# List of known malicious scan paths
+# List of known malicious or bot-scan paths
 SUSPICIOUS_PATHS = [
     "/cgi-bin/luci",
     "/actuator",
@@ -19,11 +19,11 @@ SUSPICIOUS_PATHS = [
 # Middleware for error handling and threat filtering
 @webserver.middleware
 async def error_middleware(request, handler):
-    # Block suspicious paths
+    # Block suspicious scanning paths
     if any(request.path.startswith(p) for p in SUSPICIOUS_PATHS):
         logger.warning(f"Blocked suspicious path: {request.path} from {request.remote}")
         return webserver.json_response({"error": "Forbidden"}, status=403)
-    
+
     try:
         response = await handler(request)
         if response.status == 404:
@@ -36,10 +36,11 @@ async def error_middleware(request, handler):
         logger.exception("Unhandled exception in web server")
         return webserver.json_response({"error": "Internal Server Error"}, status=500)
 
-# aiohttp app creation
+# aiohttp app creation with increased max_field_size
 async def bot_run():
     _app = webserver.Application(
-        client_max_size=30_000_000,
+        client_max_size=30_000_000,     # 30MB request body max
+        max_field_size=16 * 1024,       # 16KB max header field size (fixes LineTooLong error)
         middlewares=[error_middleware]
     )
     _app.add_routes(routes)
@@ -51,3 +52,8 @@ async def root_route_handler(request):
     return webserver.json_response(
         "Goutham Josh KuttuBot Web Supported . . . !  This is a preview of WeB . . .! ! !"
     )
+
+# Catch-all for unsupported methods or unknown routes
+@routes.route("*", "/{tail:.*}")
+async def catch_all(request):
+    return webserver.json_response({"error": "Method Not Allowed"}, status=405)
