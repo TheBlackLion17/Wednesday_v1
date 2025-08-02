@@ -57,6 +57,13 @@ Filters allow users to set automated replies for specific keywords. Whenever a m
 • <code>/del</code> – Delete a specific filter  
 • <code>/delall</code> – Delete all filters (Chat Owner only)
 """
+    PM_SUPPORT_TXT = """<b>Hey {user},
+
+❌ You can't search for movies in private chat.
+
+✅ Please join our Movie Channel and try searching there instead.</b>
+
+<blockquote>©️ Maintained by <a href="https://t.me/AgsModsOG">@AgsModsOG</a></blockquote>"""
 
     BUTTON_TXT = """<b>❓ Help: Buttons</b>
 
