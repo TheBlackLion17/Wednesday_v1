@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from info import ADMINS, SUPPORT_CHANNEL
+from info import ADMINS
 from Script import script
 
 @Client.on_message(filters.private & filters.text & ~filters.command)
