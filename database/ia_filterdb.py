@@ -7,6 +7,7 @@ from pymongo.errors import DuplicateKeyError
 from umongo import Instance, Document, fields
 from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
+from utils import *
 from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER
 
 logger = logging.getLogger(__name__)
@@ -31,38 +32,43 @@ class Media(Document):
         indexes = ('$file_name', )
         collection_name = COLLECTION_NAME
 
+async def choose_mediaDB():
+    """This Function chooses which database to use based on the value of indexDB key in the dict tempDict."""
+    global saveMedia
+    if tempDict['indexDB'] == DATABASE_URI:
+        logger.info("Using first db (Media)")
+        saveMedia = Media
 
-async def save_file(media):
-    """Save file in database"""
 
-    # TODO: Find better way to get same file_id for same media to avoid duplicates
-    file_id, file_ref = unpack_new_file_id(media.file_id)
-    file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+async def save_file(bot, media):
+  """Save file in database"""
+  global saveMedia
+  file_id, file_ref = unpack_new_file_id(media.file_id)
+  file_name = re.sub(r"(_|\-|\.|\+)", " ", str(media.file_name))
+  try:
+    file = Media(
+        file_id=file_id,
+        file_ref=file_ref,
+        file_name=file_name,
+        file_size=media.file_size,
+        file_type=media.file_type,
+        mime_type=media.mime_type,
+        caption=media.caption.html if media.caption else None,
+    )
+  except ValidationError:
+    logger.exception('Error occurred while saving file in database')
+    return False, 2
+  else:
     try:
-        file = Media(
-            file_id=file_id,
-            file_ref=file_ref,
-            file_name=file_name,
-            file_size=media.file_size,
-            file_type=media.file_type,
-            mime_type=media.mime_type,
-            caption=media.caption.html if media.caption else None,
-        )
-    except ValidationError:
-        logger.exception('Error occurred while saving file in database')
-        return False, 2
+      await file.commit()
+    except DuplicateKeyError:
+      logger.warning(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')   
+      return False, 0
     else:
-        try:
-            await file.commit()
-        except DuplicateKeyError:      
-            logger.warning(
-                f'{getattr(media, "file_name", "NO_FILE")} is already saved in database'
-            )
-
-            return False, 0
-        else:
-            logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-            return True, 1
+        logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+        if await get_status(bot.me.id):
+            await send_msg(bot, file.file_name, file.caption)
+        return True, 1
 
 
 
