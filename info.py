@@ -16,7 +16,7 @@ def is_enabled(value, default):
 SESSION = environ.get('SESSION', 'Media_search')
 API_ID = int(environ.get('API_ID', '13357171'))
 API_HASH = environ.get('API_HASH', 'd39c4324a40a8a6b27a067f8ff2b987e')
-BOT_TOKEN = environ.get('BOT_TOKEN', '8348783837:AAETITyx94X8jlrIfTXY-iNbM1I73x2ZStQ')
+BOT_TOKEN = environ.get('BOT_TOKEN', '8397223439:AAHyBcs-kEAyvV1kKYEz9t6lg_LtWG1bV6U')
 
 # Bot settings
 BOT_START_TIME = time()
@@ -37,7 +37,7 @@ FORCE_SUB1 = environ.get('FORCE_SUB1', 'https://t.me/+ObqOm7i5ZcdkMDZl')
 FORCE_SUB2 = environ.get('FORCE_SUB2', 'https://t.me/+ObqOm7i5ZcdkMDZl')
 
 # MongoDB information
-DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://newdb:newdb@cluster0.i1myyla.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://db2:db2@cluster0.uvwlb7r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'files')
 
